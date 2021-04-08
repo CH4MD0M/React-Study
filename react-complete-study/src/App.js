@@ -1,6 +1,7 @@
 import React from "react";
-import MyComponent from "./MyComponent";
 import "./App.css";
+import Counter from "./Counter";
+// import MyComponent from "./MyComponent";
 
 // function App() {
 //   const name = "React";
@@ -65,7 +66,16 @@ import "./App.css";
 // 3.2.3 모듈 내보내기 및 불러오기
 // 3.3 props
 
+// const App = () => {
+//   return (
+//     <MyComponent name="react" favoriteNumber={3}>
+//       리액트
+//     </MyComponent>
+//   );
+// };
+
 const App = () => {
-  return <MyComponent />;
+  return <Counter />;
 };
+
 export default App;
