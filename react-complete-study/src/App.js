@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
-import Counter from "./Counter";
-// import MyComponent from "./MyComponent";
+import EventPractice from "./EventPractice";
 
 // function App() {
 //   const name = "React";
@@ -74,8 +73,13 @@ import Counter from "./Counter";
 //   );
 // };
 
+// const App = () => {
+//   return <Counter />;
+// };
+
 const App = () => {
-  return <Counter />;
+  // return <Say />;
+  return <EventPractice />;
 };
 
 export default App;
