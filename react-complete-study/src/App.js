@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 
-import ScrollBox from "./chapter5/ScrollBox";
+import IterationSample from "./chapter6/IterationSample";
 
 // function App() {
 //   const name = "React";
@@ -74,16 +74,24 @@ import ScrollBox from "./chapter5/ScrollBox";
 //   );
 // };
 
+// //////////////////////////////////////////////////
+// 5.3.4 컴포넌트에 ref 달고 내부 메서드 사용
+// class App extends Component {
+//   render() {
+//     return (
+//       <div>
+//         <ScrollBox ref={(ref) => (this.scrollBox = ref)} />
+//         <button onClick={() => this.scrollBox.scrollToBottom()}>
+//           맨밑으로
+//         </button>
+//       </div>
+//     );
+//   }
+// }
+
 class App extends Component {
   render() {
-    return (
-      <div>
-        <ScrollBox ref={(ref) => (this.scrollBox = ref)} />
-        <button onClick={() => this.scrollBox.scrollToBottom()}>
-          맨밑으로
-        </button>
-      </div>
-    );
+    return <IterationSample />;
   }
 }
 
