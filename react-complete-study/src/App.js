@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import "./App.css";
-import EventPractice from "./EventPractice";
+
+import ScrollBox from "./chapter5/ScrollBox";
 
 // function App() {
 //   const name = "React";
@@ -73,13 +74,17 @@ import EventPractice from "./EventPractice";
 //   );
 // };
 
-// const App = () => {
-//   return <Counter />;
-// };
-
-const App = () => {
-  // return <Say />;
-  return <EventPractice />;
-};
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <ScrollBox ref={(ref) => (this.scrollBox = ref)} />
+        <button onClick={() => this.scrollBox.scrollToBottom()}>
+          맨밑으로
+        </button>
+      </div>
+    );
+  }
+}
 
 export default App;
