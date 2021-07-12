@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, memo } from "react";
 import Try from "./Try";
 
 function getNumbers() {
@@ -14,11 +14,12 @@ function getNumbers() {
     return array;
 }
 
-const NumberBaseball = () => {
+const NumberBaseball = memo(() => {
     const [result, setResult] = useState("");
     const [value, setValue] = useState("");
     const [answer, setAnswer] = useState(getNumbers());
     const [tries, setTries] = useState([]);
+    const inputEl = useRef(null);
 
     const onSubmitForm = (e) => {
         e.preventDefault();
@@ -29,6 +30,7 @@ const NumberBaseball = () => {
             setValue("");
             setAnswer(getNumbers());
             setTries([]);
+            inputEl.current.focus();
         } else {
             // 답 틀렸으면
             const answerArray = value.split("").map((v) => parseInt(v));
@@ -44,6 +46,7 @@ const NumberBaseball = () => {
                 setValue("");
                 setAnswer(getNumbers());
                 setTries([]);
+                inputEl.current.focus();
             } else {
                 for (let i = 0; i < 4; i += 1) {
                     if (answerArray[i] === answer[i]) {
@@ -60,13 +63,14 @@ const NumberBaseball = () => {
                     },
                 ]);
                 setValue("");
+                inputEl.current.focus();
             }
         }
     };
 
     const onChangeInput = (e) => {
-        console.log(answer);
-        console.log(tries);
+        // console.log(answer);
+        // console.log(tries);
         setValue(e.target.value);
     };
 
@@ -84,5 +88,5 @@ const NumberBaseball = () => {
             </ul>
         </>
     );
-};
+});
 export default NumberBaseball;
