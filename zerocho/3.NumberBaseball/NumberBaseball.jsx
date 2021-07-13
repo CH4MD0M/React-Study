@@ -2,6 +2,7 @@ import React, { useState, useRef, memo } from "react";
 import Try from "./Try";
 
 function getNumbers() {
+    // console.log("getnumbers");
     const candidate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     const array = [];
     for (let i = 0; i < 4; i += 1) {
@@ -30,7 +31,7 @@ const NumberBaseball = memo(() => {
             setValue("");
             setAnswer(getNumbers());
             setTries([]);
-            inputEl.current.focus();
+            inputEl.focus();
         } else {
             // 답 틀렸으면
             const answerArray = value.split("").map((v) => parseInt(v));
@@ -46,7 +47,7 @@ const NumberBaseball = memo(() => {
                 setValue("");
                 setAnswer(getNumbers());
                 setTries([]);
-                inputEl.current.focus();
+                inputEl.focus();
             } else {
                 for (let i = 0; i < 4; i += 1) {
                     if (answerArray[i] === answer[i]) {
@@ -63,7 +64,7 @@ const NumberBaseball = memo(() => {
                     },
                 ]);
                 setValue("");
-                inputEl.current.focus();
+                inputEl.focus();
             }
         }
     };
