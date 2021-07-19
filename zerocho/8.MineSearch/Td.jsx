@@ -60,7 +60,7 @@ const getTdText = (code) => {
             return "?";
 
         default:
-            return "";
+            return code || "";
     }
 };
 

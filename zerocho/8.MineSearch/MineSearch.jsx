@@ -1,7 +1,9 @@
 import React, { createContext, useMemo, useReducer } from "react";
 import Table from "./Table";
 import Form from "./Form";
+import Td from "./Td";
 
+// code 값
 export const CODE = {
     MINE: -7,
     NORMAL: -1,
@@ -13,6 +15,7 @@ export const CODE = {
     OPENED: 0, // 0 이상이면 다 opened
 };
 
+// Context API 생성
 export const TableContext = createContext({
     tableData: [],
     halted: true,
@@ -24,14 +27,16 @@ const initialState = {
     timer: 0,
     result: "",
     halted: true,
+    openedCount: 0,
 };
 
+// 지뢰 심기
 const plantMine = (row, cell, mine) => {
     console.log(row, cell, mine);
     // row, cell 값을 받아서 빈 배열을 생성
     const candidate = Array(row * cell)
         .fill()
-        .map((arr, i) => {
+        .map((_, i) => {
             return i;
         });
 
@@ -66,6 +71,7 @@ const plantMine = (row, cell, mine) => {
     return data;
 };
 
+// action.type
 export const START_GAME = "START_GAME";
 export const OPEN_CELL = "OPEN_CELL";
 export const CLICK_MINE = "CLICK_MINE";
@@ -73,6 +79,7 @@ export const FLAG_CELL = "FLAG_CELL";
 export const QUESTION_CELL = "QUESTION_CELL";
 export const NORMALIZE_CELL = "NORMALIZE_CELL";
 
+// reducer 함수
 const reducer = (state, action) => {
     switch (action.type) {
         case START_GAME:
@@ -84,12 +91,109 @@ const reducer = (state, action) => {
         case OPEN_CELL: {
             const tableData = [...state.tableData];
             tableData[action.row] = [...state.tableData[action.row]];
-            tableData[action.row][action.cell] = CODE.OPENED;
+            tableData.forEach((row, i) => {
+                tableData[i] = [...row];
+            });
+
+            const checked = [];
+            let openedCount = 0;
+            // 클릭 시 주변 칸 체크
+            const checkAround = (row, cell) => {
+                // 상하좌우 없는 칸은 열지 않기
+                if (
+                    row < 0 ||
+                    row >= tableData.length ||
+                    cell < 0 ||
+                    cell >= tableData[0].length
+                ) {
+                    return;
+                }
+
+                // 닫힌 칸만 열기
+                if (
+                    [
+                        CODE.OPENED,
+                        CODE.FLAG,
+                        CODE.FLAG_MINE,
+                        CODE.QUESTION_MINE,
+                        CODE.QUESTION,
+                    ].includes(tableData[row][cell])
+                ) {
+                    return;
+                }
+
+                // 한 번 연 칸은 무시하기
+                if (checked.includes(row + "," + cell)) {
+                    return;
+                } else {
+                    checked.push(row + "," + cell);
+                }
+
+                let around = [
+                    tableData[row][cell - 1],
+                    tableData[row][cell + 1],
+                ];
+                // 윗 칸이 있을 때
+                if (tableData[row - 1]) {
+                    around = around.concat(
+                        tableData[row - 1][cell - 1],
+                        tableData[row - 1][cell],
+                        tableData[row - 1][cell + 1]
+                    );
+                }
+                // 아랫 칸이 있을 때
+                if (tableData[row + 1]) {
+                    around = around.concat(
+                        tableData[row + 1][cell - 1],
+                        tableData[row + 1][cell],
+                        tableData[row + 1][cell + 1]
+                    );
+                }
+                const count = around.filter(function (v) {
+                    return [
+                        CODE.MINE,
+                        CODE.FLAG_MINE,
+                        CODE.QUESTION_MINE,
+                    ].includes(v);
+                }).length;
+                if (count === 0) {
+                    // 주변칸 오픈
+                    if (row > -1) {
+                        const near = [];
+                        if (row - 1 > -1) {
+                            near.push([row - 1, cell - 1]);
+                            near.push([row - 1, cell]);
+                            near.push([row - 1, cell + 1]);
+                        }
+                        near.push([row, cell - 1]);
+                        near.push([row, cell + 1]);
+                        if (row + 1 < tableData.length) {
+                            near.push([row + 1, cell - 1]);
+                            near.push([row + 1, cell]);
+                            near.push([row + 1, cell + 1]);
+                        }
+                        near.forEach((n) => {
+                            if (tableData[n[0]][n[1]] !== CODE.OPENED) {
+                                checkAround(n[0], n[1]);
+                            }
+                        });
+                    }
+                }
+                if (tableData[row][cell] === CODE.NORMAL) {
+                    // 내 칸이 닫힌 칸이면 카운트 증가
+                    openedCount += 1;
+                }
+                tableData[row][cell] = count;
+            };
+            checkAround(action.row, action.cell);
+
             return {
                 ...state,
                 tableData,
             };
         }
+
+        // 지뢰 클릭 시
         case CLICK_MINE: {
             const tableData = [...state.tableData];
             tableData[action.row] = [...state.tableData[action.row]];
@@ -100,6 +204,7 @@ const reducer = (state, action) => {
                 halted: true,
             };
         }
+        // ! 클릭 시
         case FLAG_CELL: {
             const tableData = [...state.tableData];
             tableData[action.row] = [...state.tableData[action.row]];
@@ -113,6 +218,7 @@ const reducer = (state, action) => {
                 tableData,
             };
         }
+        // ? 클릭 시
         case QUESTION_CELL: {
             const tableData = [...state.tableData];
             tableData[action.row] = [...state.tableData[action.row]];
