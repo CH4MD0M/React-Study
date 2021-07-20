@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext, useCallback, memo } from "react";
 import {
     CLICK_MINE,
     CODE,
@@ -9,7 +9,6 @@ import {
     TableContext,
 } from "./MineSearch";
 
-// cell의 스타일
 const getTdStyle = (code) => {
     switch (code) {
         case CODE.NORMAL:
@@ -17,21 +16,21 @@ const getTdStyle = (code) => {
             return {
                 background: "#444",
             };
-
-        case CODE.OPENED:
         case CODE.CLICKED_MINE:
+        case CODE.OPENED:
             return {
                 background: "#fff",
             };
-
-        case CODE.FLAG:
-        case CODE.FLAG_MINE:
-            return { background: "red" };
-
-        case CODE.QUESTION:
         case CODE.QUESTION_MINE:
-            return { background: "yellow" };
-
+        case CODE.QUESTION:
+            return {
+                background: "yellow",
+            };
+        case CODE.FLAG_MINE:
+        case CODE.FLAG:
+            return {
+                background: "red",
+            };
         default:
             return {
                 background: "#fff",
@@ -39,33 +38,28 @@ const getTdStyle = (code) => {
     }
 };
 
-// cell의 텍스트
 const getTdText = (code) => {
+    // console.log("getTdtext");
     switch (code) {
         case CODE.NORMAL:
             return "";
-
         case CODE.MINE:
             return "X";
-
         case CODE.CLICKED_MINE:
             return "펑";
-
-        case CODE.FLAG:
         case CODE.FLAG_MINE:
+        case CODE.FLAG:
             return "!";
-
-        case CODE.QUESTION:
         case CODE.QUESTION_MINE:
+        case CODE.QUESTION:
             return "?";
-
         default:
             return code || "";
     }
 };
 
-const Td = ({ rowIndex, cellIndex }) => {
-    const { tableData, halted, dispatch } = useContext(TableContext);
+const Td = memo(({ rowIndex, cellIndex }) => {
+    const { tableData, dispatch, halted } = useContext(TableContext);
 
     const onClickTd = useCallback(() => {
         if (halted) {
@@ -73,30 +67,28 @@ const Td = ({ rowIndex, cellIndex }) => {
         }
         switch (tableData[rowIndex][cellIndex]) {
             case CODE.OPENED:
-            case CODE.FLAG:
             case CODE.FLAG_MINE:
-            case CODE.QUESTION:
+            case CODE.FLAG:
             case CODE.QUESTION_MINE:
+            case CODE.QUESTION:
                 return;
-
             case CODE.NORMAL:
                 dispatch({ type: OPEN_CELL, row: rowIndex, cell: cellIndex });
                 return;
-
             case CODE.MINE:
                 dispatch({ type: CLICK_MINE, row: rowIndex, cell: cellIndex });
+                return;
+            default:
                 return;
         }
     }, [tableData[rowIndex][cellIndex], halted]);
 
-    // 우클릭 했을 때
     const onRightClickTd = useCallback(
         (e) => {
             e.preventDefault();
             if (halted) {
                 return;
             }
-
             switch (tableData[rowIndex][cellIndex]) {
                 case CODE.NORMAL:
                 case CODE.MINE:
@@ -106,25 +98,22 @@ const Td = ({ rowIndex, cellIndex }) => {
                         cell: cellIndex,
                     });
                     return;
-
-                case CODE.FLAG:
                 case CODE.FLAG_MINE:
+                case CODE.FLAG:
                     dispatch({
                         type: QUESTION_CELL,
                         row: rowIndex,
                         cell: cellIndex,
                     });
                     return;
-
-                case CODE.QUESTION:
                 case CODE.QUESTION_MINE:
+                case CODE.QUESTION:
                     dispatch({
                         type: NORMALIZE_CELL,
                         row: rowIndex,
                         cell: cellIndex,
                     });
                     return;
-
                 default:
                     return;
             }
@@ -132,15 +121,28 @@ const Td = ({ rowIndex, cellIndex }) => {
         [tableData[rowIndex][cellIndex], halted]
     );
 
+    // console.log("td rendered");
+
+    return (
+        <RealTd
+            onClickTd={onClickTd}
+            onRightClickTd={onRightClickTd}
+            data={tableData[rowIndex][cellIndex]}
+        />
+    );
+});
+
+const RealTd = memo(({ onClickTd, onRightClickTd, data }) => {
+    // console.log("real td rendered");
     return (
         <td
-            style={getTdStyle(tableData[rowIndex][cellIndex])}
+            style={getTdStyle(data)}
             onClick={onClickTd}
             onContextMenu={onRightClickTd}
         >
-            {getTdText(tableData[rowIndex][cellIndex])}
+            {getTdText(data)}
         </td>
     );
-};
+});
 
 export default Td;
