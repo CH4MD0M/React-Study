@@ -2,12 +2,26 @@ import { useState } from "react";
 
 const SimpleInput = (props) => {
     const [enteredName, setEnteredName] = useState("");
-
     // 초기 화면에서도 state가 true로 되어있기 때문에 input에 내용을 작성했을 때를 판별해야 함.
     const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+    // const [formIsValid, setFormIsValid] = useState(false);
 
     const enteredNameIsValid = enteredName.trim() !== "";
     const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+    let formIsValid = false;
+
+    if (enteredNameIsValid) {
+        formIsValid = true;
+    }
+
+    // form에 대한 처리
+    // useEffect(() => {
+    //     if (enteredNameIsValid) {
+    //         setFormIsValid(true);
+    //     } else {
+    //         setFormIsValid(false);
+    //     }
+    // }, [enteredNameIsValid]);
 
     const nameInputChangeHandler = (e) => {
         setEnteredName(e.target.value);
@@ -52,7 +66,7 @@ const SimpleInput = (props) => {
                 )}
             </div>
             <div className="form-actions">
-                <button>Submit</button>
+                <button disabled={!formIsValid}>Submit</button>
             </div>
         </form>
     );
