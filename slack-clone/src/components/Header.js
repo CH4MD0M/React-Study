@@ -73,7 +73,7 @@ const HeaderSearch = styled.div`
     background-color: #421f44;
     padding: 0 50px;
     color: gray;
-    border: 1px gray solid;
+    border: 1px solid gray;
 
     > input {
         min-width: 30vw;

@@ -1,7 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import styled from "styled-components";
 
 import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+
 import "./App.css";
 
 function App() {
@@ -9,11 +12,13 @@ function App() {
         <div className="app">
             <Router>
                 <>
-                    <Switch>
-                        <Route path="/">
-                            <Header />
-                        </Route>
-                    </Switch>
+                    <Header />
+                    <AppBody>
+                        <Sidebar />
+                        <Switch>
+                            <Route path="/">{/* Chat */}</Route>
+                        </Switch>
+                    </AppBody>
                 </>
             </Router>
         </div>
@@ -21,3 +26,8 @@ function App() {
 }
 
 export default App;
+
+const AppBody = styled.div`
+    display: flex;
+    height: 100vh;
+`;
