@@ -5,6 +5,11 @@ import { db } from "../firebase";
 function SidebarOption({ Icon, title, addChannelOption }) {
     const addChannel = () => {
         const channelName = prompt("채널 이름을 입력 해주세요.");
+        if (channelName) {
+            db.collection("rooms").add({
+                name: channelName,
+            });
+        }
     };
 
     const selectChannel = () => {};
