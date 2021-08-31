@@ -1,11 +1,12 @@
 import React from "react";
-import styled from "styled-components";
+import { useCollection } from "react-firebase-hooks/firestore";
 
+import { db } from "../firebase";
 import SidebarOption from "./SidebarOption";
 
+import styled from "styled-components";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import CreateIcon from "@material-ui/icons/Create";
-
 import InsertCommentIcon from "@material-ui/icons/InsertComment";
 import InboxIcon from "@material-ui/icons/Inbox";
 import DraftsIcon from "@material-ui/icons/Drafts";
@@ -18,6 +19,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AddIcon from "@material-ui/icons/Add";
 
 function Sidebar() {
+    const [channels, loading, erro] = useCollection(db.collection("rooms"));
     return (
         <SidebarContainer>
             <SidebarHeader>
@@ -46,6 +48,13 @@ function Sidebar() {
                 title="Add Channel"
                 addChannelOption
             />
+            {channels?.docs.map((doc) => (
+                <SidebarOption
+                    key={doc.id}
+                    id={doc.id}
+                    title={doc.data().name}
+                />
+            ))}
         </SidebarContainer>
     );
 }
